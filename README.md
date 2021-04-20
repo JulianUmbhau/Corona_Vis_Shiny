@@ -1,8 +1,7 @@
-# Corona_visualization
+# Corona_visualization in Shiny
 
 
 
-## How to set up as shiny application
+## How to set up as shiny application (TBD)
 
 remember to delete data.rds after running usethis::use_data()
-# Corona_Vis_Shiny
