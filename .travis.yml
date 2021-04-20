@@ -1,0 +1,15 @@
+language: R
+cache: packages
+
+install:
+  - pip install -r requirements.txt
+
+script:
+  - python test_functions.py
+
+notifications:
+  email:
+    recipients:
+      - jensen_303@hotmail.com
+    on_success: never
+    on_failure: always
