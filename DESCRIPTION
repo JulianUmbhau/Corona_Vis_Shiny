@@ -4,8 +4,8 @@ Title: CoronaVisualization Dashboard
 Version: 0.1.0
 Author: Julian Johannes Umbhau Jensen
 Maintainer: Julian Johannes Umbhau Jensen <jensen_303@hotmail.com>
-Description: CoronaVisualization Dashboard using shiny and data from John Hopkins and worldometers.com
-    Testing package building
+Description: CoronaVisualization Dashboard using shiny and data from John Hopkins and worldometers.com.
+    Testing package building.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
@@ -19,5 +19,7 @@ Imports:
     magrittr,
     shiny,
     ggplot2,
-    assertthat
+    assertthat,
+    scales,
+    emo
 Config/testthat/edition: 3

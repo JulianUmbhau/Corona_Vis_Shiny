@@ -72,8 +72,8 @@ obtain_country_data <- function(){
 #' @export
 data_prep <- function(data, country_data){
   if(!assertthat::has_name(x = data,
-                       which = c("Country-Region",
-                                 "Province-State"))){
+                       which = c("Country.Region",
+                                 "Province.State"))){
     stop("Missing variables")
   }
   stopifnot(assertthat::has_name(x = country_data,
@@ -104,13 +104,13 @@ data_prep <- function(data, country_data){
 #'
 #' @importFrom tidyr gather
 #' @importFrom stats aggregate
+#' @import dplyr
 #'
 #' @return dataset converted to long
 #' @export
 convert_to_long <- function(data, extra_col){
   long <- data %>%
-    dplyr::select(.,
-                  -all_of(c("Long",
+    dplyr::select(-all_of(c("Long",
                             "Lat",
                             "province"))
     ) %>%
@@ -151,7 +151,7 @@ data_prep_wrapper <- function(url_confirmed, url_deaths){
   deaths <- data_prep(data = deaths,
                       country_data = df_full)
 
-  extra_columns <- c("country",
+  extra_col <- c("country",
                      "population",
                      "pop_per_km2",
                      "land_area",
@@ -159,9 +159,9 @@ data_prep_wrapper <- function(url_confirmed, url_deaths){
                      "urban_pop_pct")
 
   confirmed_converted <- convert_to_long(data = confirmed_cases,
-                                         extra_col = extra_columns)
+                                         extra_col = extra_col)
   deaths_converted <- convert_to_long(data = deaths,
-                                      extra_col = extra_columns)
+                                      extra_col = extra_col)
 
   confirmed_converted <- confirmed_converted %>%
     dplyr::mutate(value_pr_cap = (value/population)*100000)
