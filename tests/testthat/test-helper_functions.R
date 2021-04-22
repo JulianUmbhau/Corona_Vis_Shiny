@@ -6,8 +6,8 @@ test_country_data <- data.frame(country = c("United States",
                                             "South Korea"),
                                 test_col = c(1,2)
                                 )
-colnames(test_data) <- c("Province-State",
-                         "Country-Region")
+colnames(test_data) <- c("Province.State",
+                         "Country.Region")
 args <- list(test_data,
              test_country_data)
 result <- do.call(data_prep, args)

@@ -2,7 +2,14 @@ library(shiny)
 library(ggplot2)
 library(dplyr)
 library(rvest)
+# første corona relaterede dødsfald
+# - switch imellem cases/deaths
 
+#' @title sidebarpanelUI
+#' @description Side panel UI
+#'
+#' @return ui function
+#' @export
 sidebarPanelUI <- function(){
   sidebarPanel = sidebarPanel(
     h3(strong("Cases Total")),
@@ -44,6 +51,12 @@ sidebarPanelUI <- function(){
   )
 }
 
+#' @title mainpanelUI
+#'
+#' @import emo
+#'
+#' @return UI panel function
+#' @export
 mainPanelUI <- function(){
   mainPanel(
     plotOutput("coolplot"),
@@ -56,9 +69,14 @@ mainPanelUI <- function(){
 
 myapp <- function(){
   ui <- fluidPage(
-    titlePanel("Corona Visualization",
+    titlePanel(paste0("Corona Visualization"),
                windowTitle = "CoronaVis Dashboard"),
-    "This visualization describes the number of Corona cases, or the number of Corona related deaths, for a chosen timeline and in chosen countries. Beneath graph 1 is a graph describing the same numbers, but in rates of cases per capita million",
+    "This visualization describes the number of Corona cases, or the number of
+    Corona related deaths, for a chosen timeline and in chosen countries.
+    Beneath graph 1 is a graph describing the same numbers,
+    but in rates of cases per capita million",
+    br(),
+    paste0(c("- With thanks to P-Lars, The Bear and L man", emo::ji("man_dancing_medium_dark_skin_tone")), collapse=""),
     #div("this is blue", style = "color: blue;"),
     br(),
     br(),
@@ -68,9 +86,9 @@ myapp <- function(){
   )
 
   server <- function(input, output, session) {
-    output$coolplot <- renderPlot_CasesNumber(input)
+    output$coolplot <- renderPlot_function(input, "case_number")
 
-    output$coolplot2 <- renderPlot_CasesPerCitizen(input)
+    output$coolplot2 <- renderPlot_function(input, "cases_pr_citizen")
   }
 
   shinyApp(ui, server)
