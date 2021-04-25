@@ -1,6 +1,12 @@
 language: R
 cache: packages
 
+apt_packages:
+  - libxml2-dev
+
+r_github_packages:
+  - hadley/emo
+
 notifications:
   email:
     recipients:
