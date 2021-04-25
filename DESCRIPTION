@@ -21,5 +21,6 @@ Imports:
     ggplot2,
     assertthat,
     scales,
-    emo
+    emo,
+    pkgload
 Config/testthat/edition: 3
