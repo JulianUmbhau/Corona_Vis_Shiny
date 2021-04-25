@@ -79,6 +79,23 @@ sidebarPanelUI <- function(){
     radioButtons("graph2",
                  "Graph",
                  c("Confirmed Cases",
+                   "Confirmed Deaths")),
+    h3(strong("Cases as Percentage of Population")),
+    dateRangeInput("daterange2",
+                   "Date Range",
+                   "2020-01-22",
+                   "2021-04-18",
+                   "2020-01-22",
+                   "2021-04-18"),
+    selectInput("countries2",
+                "Countries",
+                unique(data$confirmed$country),
+                selected = c("Denmark",
+                             "Sweden"),
+                multiple = TRUE),
+    radioButtons("graph2",
+                 "Graph",
+                 c("Confirmed Cases",
                    "Confirmed Deaths"))
   )
 }
