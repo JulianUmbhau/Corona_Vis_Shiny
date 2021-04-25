@@ -3,8 +3,11 @@ library(dplyr)
 library(rvest)
 library(emo)
 
+
 #' @title myapp
 #' @description Wrapper for app, setting ui and server up
+#'
+#' @import emo
 #'
 #' @return shiny app
 #' @export
@@ -31,9 +34,7 @@ samlet_UI <- function(){
 
 }
 
-# første corona relaterede dødsfald
-# - switch imellem cases/deaths
-load(file = "data/data.rda")
+
 
 
 
@@ -61,8 +62,7 @@ sidebarPanelUI <- function(){
                  "Graph",
                  c("Confirmed Cases",
                    "Confirmed Deaths")),
-    br(), # clean up: title, x_axis, y_axis,
-    br(), br(),br(),br(),br(),
+    br(), br(), br(),br(),br(),br(),
     h3(strong("Cases per 100,000 citizens")),
     dateRangeInput("daterange2",
                    "Date Range",
