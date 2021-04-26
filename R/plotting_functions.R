@@ -29,9 +29,9 @@ renderPlot_function <- function(input, plot_type){
     }
 
     if(graph_choice == "Confirmed Cases"){
-      temp <- data$confirmed
+      temp <- corona_data$confirmed
     } else {
-      temp <- data$deaths
+      temp <- corona_data$deaths
     }
 
     legend_labels <- c()
@@ -49,7 +49,7 @@ renderPlot_function <- function(input, plot_type){
       filter(country %in% country_list) %>%
       filter(date >= date_range_start,
              date <= date_range_end) %>%
-      ggplot(aes(date, value_pr_cap, color = country)) +
+      ggplot(aes(date, .data$value_pr_cap, color = country)) +
       geom_point() +
       xlab("Date Range") +
       ylab(y_lab) +

@@ -36,26 +36,17 @@ obtain_country_data <- function(){
                "land_area",
                "median_age",
                "urban_pop_pct")
+  df <- list()
   for (i in seq_along(child_nodes)) {
-    assign(x = paste(columns[i]),
-           value = get_html(webpage, child_nodes[i])
-    )
+    df[columns[i]] <- list(get_html(webpage, child_nodes[i]))
   }
   df_full <- tidyr::tibble(
-    country = country,
-    population = population,
-    pop_per_km2 = pop_per_km2,
-    land_area = land_area,
-    median_age = median_age,
-    urban_pop_pct = urban_pop_pct)
-
-  df_full$population <- as.numeric(gsub(",","",population))
-  df_full$pop_per_km2 <- as.numeric(gsub(",","",pop_per_km2))
-  df_full$land_area <- as.numeric(gsub(",","",land_area))
-  df_full$median_age <- as.numeric(gsub(",","",median_age))
-  urban_pop_pct <- gsub("%","",urban_pop_pct)
-  df_full$urban_pop_pct <- as.numeric(gsub(",","",urban_pop_pct))
-
+    country = df$country,
+    population = as.numeric(gsub(",","",df$population)),
+    pop_per_km2 = as.numeric(gsub(",","",df$pop_per_km2)),
+    land_area = as.numeric(gsub(",","",df$land_area)),
+    median_age = as.numeric(gsub(",","",df$median_age)),
+    urban_pop_pct = as.numeric(gsub(",","", gsub("%","",df$urban_pop_pct))))
   return(df_full)
 }
 
@@ -92,7 +83,7 @@ data_prep <- function(data, country_data){
   data$country <- gsub("Korea, South", "South Korea", data$country)
   data$country <- as.character(data$country)
   data <- merge(data, country_data, by = "country")
-  data
+  return(data)
 }
 
 
@@ -114,11 +105,10 @@ convert_to_long <- function(data, extra_col){
                             "Lat",
                             "province"))
     ) %>%
-    tidyr::gather(date,
-                  value,
-                  -all_of(c(extra_col)))
-  long$date <- as.Date(x = long$date,
-                       format = "%m-%d-%y")
+    tidyr::gather(key = "date",
+                  value = "value",
+                  -all_of(c(extra_col))) %>%
+    mutate(date = as.Date(x = date, format = "%m-%d-%y"))
   long <- aggregate(. ~ date+country+population+pop_per_km2+land_area+median_age+urban_pop_pct,
                     data=long,
                     FUN=sum)
@@ -143,7 +133,7 @@ data_prep_wrapper <- function(url_confirmed, url_deaths){
 
   deaths <- read.csv(url_deaths)
 
-  df_full <- obtain_country_data()
+  df_full <- suppressWarnings(obtain_country_data())
 
   confirmed_cases <- data_prep(data = confirmed_cases,
                                country_data = df_full)
@@ -164,9 +154,9 @@ data_prep_wrapper <- function(url_confirmed, url_deaths){
                                       extra_col = extra_col)
 
   confirmed_converted <- confirmed_converted %>%
-    dplyr::mutate(value_pr_cap = (value/population)*100000)
+    mutate(value_pr_cap = (.data$value/.data$population)*100000)
   deaths_converted <- deaths_converted %>%
-    dplyr::mutate(value_pr_cap = (value/population)*100000)
+    mutate(value_pr_cap = (.data$value/.data$population)*100000)
   data <- list(
     confirmed = confirmed_converted,
     deaths = deaths_converted
