@@ -12,3 +12,5 @@ TODO: continuous data update - https://towardsdatascience.com/how-to-build-r-shi
 TODO: Make map visualization, look at john hopkins
 TODO: Percentages - deaths/number of infected, deaths/number of citizens, cases/number of citizens
 TODO: Hospitalizations?
+TODO: interactive plots - plot_ly
+TODO: calculate r rate for country and display in legend?

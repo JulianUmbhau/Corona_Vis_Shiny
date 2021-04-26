@@ -8,6 +8,7 @@ library(emo)
 #' @description Wrapper for app, setting ui and server up
 #'
 #' @import emo
+#' @import shiny
 #'
 #' @return shiny app
 #' @export
@@ -41,6 +42,8 @@ samlet_UI <- function(){
 #' @title sidebarpanelUI
 #' @description Side panel UI
 #'
+#' @import shiny
+#'
 #' @return ui function
 #' @export
 sidebarPanelUI <- function(){
@@ -54,7 +57,7 @@ sidebarPanelUI <- function(){
                    "2021-04-18"),
     selectInput("countries",
                 "Countries",
-                unique(data$confirmed$country),
+                unique(corona_data$confirmed$country),
                 selected = c("Denmark",
                              "Sweden"),
                 multiple = TRUE),
@@ -72,7 +75,7 @@ sidebarPanelUI <- function(){
                    "2021-04-18"),
     selectInput("countries2",
                 "Countries",
-                unique(data$confirmed$country),
+                unique(corona_data$confirmed$country),
                 selected = c("Denmark",
                              "Sweden"),
                 multiple = TRUE),
@@ -89,7 +92,7 @@ sidebarPanelUI <- function(){
                    "2021-04-18"),
     selectInput("countries2",
                 "Countries",
-                unique(data$confirmed$country),
+                unique(corona_data$confirmed$country),
                 selected = c("Denmark",
                              "Sweden"),
                 multiple = TRUE),
@@ -103,6 +106,7 @@ sidebarPanelUI <- function(){
 #' @title mainpanelUI
 #'
 #' @import emo
+#' @import shiny
 #'
 #' @return UI panel function
 #' @export

@@ -9,4 +9,4 @@
 #'   \item{carat}{weight of the diamond, in carats}
 #'   ...
 #' }
-"data"
+"corona_data"
