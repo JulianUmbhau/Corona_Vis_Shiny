@@ -9,4 +9,5 @@
 server <- function(input, output, session) {
   output$coolplot <- renderPlot_function(input, plot_type = "case_number")
   output$coolplot2 <- renderPlot_function(input, plot_type = "cases_pr_citizen")
+  output$coolplot3 <- renderPlot_function(input, plot_type = "fatality_rate")
 }

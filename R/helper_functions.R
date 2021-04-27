@@ -63,12 +63,12 @@ obtain_country_data <- function(){
 #' @export
 data_prep <- function(data, country_data){
   if(!assertthat::has_name(x = data,
-                       which = c("Country.Region",
-                                 "Province.State"))){
+                           which = c("Country.Region",
+                                     "Province.State"))){
     stop("Missing variables")
   }
   stopifnot(assertthat::has_name(x = country_data,
-                                   which = "country")
+                                 which = "country")
   )
   stopifnot(assertthat::not_empty(data))
   stopifnot(assertthat::not_empty(country_data))
@@ -142,11 +142,11 @@ data_prep_wrapper <- function(url_confirmed, url_deaths){
                       country_data = df_full)
 
   extra_col <- c("country",
-                     "population",
-                     "pop_per_km2",
-                     "land_area",
-                     "median_age",
-                     "urban_pop_pct")
+                 "population",
+                 "pop_per_km2",
+                 "land_area",
+                 "median_age",
+                 "urban_pop_pct")
 
   confirmed_converted <- convert_to_long(data = confirmed_cases,
                                          extra_col = extra_col)
@@ -157,9 +157,19 @@ data_prep_wrapper <- function(url_confirmed, url_deaths){
     mutate(value_pr_cap = (.data$value/.data$population)*100000)
   deaths_converted <- deaths_converted %>%
     mutate(value_pr_cap = (.data$value/.data$population)*100000)
+
+  collected <- left_join(confirmed_converted,
+                         deaths_converted %>%
+                           select(date, country, value) %>%
+                           rename(value_deaths = value)
+                         ) %>%
+    mutate(value_fatality_rate = (value_deaths/value)*100)
+  collected$value_fatality_rate[is.nan(collected$value_fatality_rate)] <- NA
+
   data <- list(
     confirmed = confirmed_converted,
-    deaths = deaths_converted
+    deaths = deaths_converted,
+    collected = collected
   )
   return(data)
 }

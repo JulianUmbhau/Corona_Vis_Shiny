@@ -53,6 +53,14 @@ renderPlot_function <- function(input, plot_type){
       data_value <- "value_pr_cap"
       title <- "Cases per 100,000 citizens"
       y_lab <- "Number of Cases per 100,000 Citizens"
+    } else if(plot_type == "fatality_rate") {
+      graph_choice <- "fatality_rate"
+      country_list <- input$countries3
+      date_range_start <- input$daterange3[1]
+      date_range_end <- input$daterange3[2]
+      data_value <- "value_fatality_rate"
+      title <- "Fatality Rate"
+      y_lab <- "Deaths per Confirmed Case - pct"
     } else {
       stop("No plot type chosen")
     }
@@ -61,6 +69,8 @@ renderPlot_function <- function(input, plot_type){
       temp <- corona_data$confirmed
     } else if(graph_choice == "Confirmed Deaths"){
       temp <- corona_data$deaths
+    } else if(graph_choice == "fatality_rate"){
+      temp <- corona_data$collected
     } else {
       stop("Wrong graph choice")
     }

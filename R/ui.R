@@ -81,26 +81,23 @@ sidebarPanelUI <- function(){
                 multiple = TRUE),
     radioButtons("graph2",
                  "Graph",
-                 c("Confirmed Cases",
+                 choices = c("Confirmed Cases",
                    "Confirmed Deaths")),
     br(), br(), br(),br(),br(),br(),br(),
-    h3(strong("Cases as Percentage of Population")),
-    dateRangeInput("daterange2",
+    h3(strong("Fatality to case rate - pct")),
+    dateRangeInput("daterange3",
                    "Date Range",
                    "2020-01-22",
                    "2021-04-18",
                    "2020-01-22",
                    "2021-04-18"),
-    selectInput("countries2",
+    selectInput("countries3",
                 "Countries",
                 unique(corona_data$confirmed$country),
                 selected = c("Denmark",
                              "Sweden"),
                 multiple = TRUE),
-    radioButtons("graph2",
-                 "Graph",
-                 c("Confirmed Cases",
-                   "Confirmed Deaths")), width = 3
+    width = 3
   )
 }
 
@@ -117,5 +114,5 @@ mainPanelUI <- function(){
     br(), br(), br(),
     plotOutput("coolplot2"),
     br(), br(), br(),
-    tableOutput("results"), width = 9)
+    plotOutput("coolplot3"), width = 9)
 }
