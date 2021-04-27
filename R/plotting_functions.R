@@ -1,3 +1,28 @@
+
+#' @title create_labels
+#' @description creates labels for plot legend with coutry names and flags
+#'
+#' @param country_list list of countries input
+#'
+#' @import emo
+#'
+#' @return list of countries and flags appended
+#' @export
+create_labels <- function(country_list){
+  legend_labels <- c()
+  for (country in country_list) {
+    if("try-error" %in% class(try(emo::ji_find(country), silent = TRUE))) {
+      flag <- emo::ji_find("question_mark")
+    } else {
+      flag <- emo::ji_find(country)
+    }
+    temp_tt <- paste0(c(country, " ", flag[[2]]), collapse = "")
+    legend_labels <- paste0(c(legend_labels, temp_tt))
+  }
+  return(legend_labels)
+}
+
+
 #' @title renderplot function
 #' @description renders graphs
 #'
@@ -17,45 +42,49 @@ renderPlot_function <- function(input, plot_type){
       country_list <- input$countries
       date_range_start <- input$daterange[1]
       date_range_end <- input$daterange[2]
+      data_value <- "value"
       title <- "Cases"
       y_lab <- "Number of Cases"
-    } else {
+    } else if (plot_type == "cases_pr_citizen") {
       graph_choice <- input$graph2
       country_list <- input$countries2
       date_range_start <- input$daterange2[1]
       date_range_end <- input$daterange2[2]
+      data_value <- "value_pr_cap"
       title <- "Cases per 100,000 citizens"
       y_lab <- "Number of Cases per 100,000 Citizens"
+    } else {
+      stop("No plot type chosen")
     }
 
     if(graph_choice == "Confirmed Cases"){
       temp <- corona_data$confirmed
-    } else {
+    } else if(graph_choice == "Confirmed Deaths"){
       temp <- corona_data$deaths
+    } else {
+      stop("Wrong graph choice")
     }
 
-    legend_labels <- c()
-    for (country in country_list) {
-      if("try-error" %in% class(try(emo::ji_find(country), silent = TRUE))) {
-        flag <- emo::ji_find("question_mark")
-      } else {
-        flag <- emo::ji_find(country)
-        }
-      temp_tt <- paste0(c(country, " ", flag[[2]]), collapse = "")
-      legend_labels <- paste0(c(legend_labels, temp_tt))
-    }
-
-    temp %>%
-      filter(country %in% country_list) %>%
+    temp <- temp %>%
+      filter(.data$country %in% country_list) %>%
       filter(date >= date_range_start,
              date <= date_range_end) %>%
-      ggplot(aes(date, .data$value_pr_cap, color = country)) +
+      arrange(.data$country)
+
+    country_list <- sort(country_list)
+    legend_labels <- create_labels(country_list)
+
+    temp %>%
+      ggplot(aes_string("date",
+                        paste0(data_value),
+                        color = "country")) +
       geom_point() +
       xlab("Date Range") +
       ylab(y_lab) +
       ggtitle(title) +
       scale_x_date(breaks = scales::pretty_breaks(n = 10)) +
-      scale_y_continuous(breaks = scales::pretty_breaks(n = 10)) +
+      scale_y_continuous(labels = scales::comma,
+                         breaks = scales::pretty_breaks(n = 10)) +
       labs(color = "Countries") +
       scale_colour_discrete(labels = legend_labels)
 

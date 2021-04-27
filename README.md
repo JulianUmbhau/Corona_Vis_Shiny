@@ -14,3 +14,4 @@ TODO: Percentages - deaths/number of infected, deaths/number of citizens, cases/
 TODO: Hospitalizations?
 TODO: interactive plots - plot_ly
 TODO: calculate r rate for country and display in legend?
+TODO: Check values on graphs - india?
