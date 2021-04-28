@@ -22,5 +22,6 @@ Imports:
     assertthat,
     scales,
     emo,
-    pkgload
+    pkgload,
+    plotly
 Config/testthat/edition: 3

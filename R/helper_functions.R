@@ -158,12 +158,16 @@ data_prep_wrapper <- function(url_confirmed, url_deaths){
   deaths_converted <- deaths_converted %>%
     mutate(value_pr_cap = (.data$value/.data$population)*100000)
 
+  variables_kept <- c("date",
+                      "country",
+                      "value")
+
   collected <- left_join(confirmed_converted,
                          deaths_converted %>%
-                           select(date, country, value) %>%
-                           rename(value_deaths = value)
+                           select(all_of(variables_kept)) %>%
+                           rename(value_deaths = .data$value)
                          ) %>%
-    mutate(value_fatality_rate = (value_deaths/value)*100)
+    mutate(value_fatality_rate = (.data$value_deaths/.data$value)*100)
   collected$value_fatality_rate[is.nan(collected$value_fatality_rate)] <- NA
 
   data <- list(

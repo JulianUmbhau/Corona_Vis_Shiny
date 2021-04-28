@@ -9,9 +9,7 @@
 - 
 
 TODO: continuous data update - https://towardsdatascience.com/how-to-build-r-shiny-apps-that-update-themselves-6ce2d9606e90
-TODO: Make map visualization, look at john hopkins
-TODO: Percentages - deaths/number of infected, deaths/number of citizens, cases/number of citizens
+TODO: - Needs server updating data - dropbox possible for remote data access but unsafe
+TODO: Make map visualization, leaflet - look at john hopkins
 TODO: Hospitalizations?
 TODO: interactive plots - plot_ly
-TODO: calculate r rate for country and display in legend?
-TODO: Check values on graphs - india?

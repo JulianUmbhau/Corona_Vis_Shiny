@@ -105,14 +105,15 @@ sidebarPanelUI <- function(){
 #'
 #' @import emo
 #' @import shiny
+#' @importFrom plotly plotlyOutput
 #'
 #' @return UI panel function
 #' @export
 mainPanelUI <- function(){
   mainPanel(
-    plotOutput("coolplot"),
+    plotly::plotlyOutput("coolplot"),
     br(), br(), br(),
-    plotOutput("coolplot2"),
+    plotly::plotlyOutput("coolplot2"),
     br(), br(), br(),
-    plotOutput("coolplot3"), width = 9)
+    plotly::plotlyOutput("coolplot3"), width = 9)
 }
