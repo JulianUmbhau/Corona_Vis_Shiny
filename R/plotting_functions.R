@@ -31,11 +31,12 @@ create_labels <- function(country_list){
 #'
 #' @import scales
 #' @import ggplot2
+#' @importFrom plotly ggplotly renderPlotly
 #'
 #' @return graph
 #' @export
 renderPlot_function <- function(input, plot_type){
-  renderPlot({
+  renderPlotly({
 
     if(plot_type == "case_number"){
       graph_choice <- input$graph
@@ -84,7 +85,7 @@ renderPlot_function <- function(input, plot_type){
     country_list <- sort(country_list)
     legend_labels <- create_labels(country_list)
 
-    temp %>%
+    p <- temp %>%
       ggplot(aes_string("date",
                         paste0(data_value),
                         color = "country")) +
@@ -97,6 +98,7 @@ renderPlot_function <- function(input, plot_type){
                          breaks = scales::pretty_breaks(n = 10)) +
       labs(color = "Countries") +
       scale_colour_discrete(labels = legend_labels)
+    plotly::ggplotly(p)
 
   })
 }
