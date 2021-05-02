@@ -20,7 +20,9 @@ samlet_UI <- function(){
     "This visualization describes the number of Corona cases, or the number of
     Corona related deaths, for a chosen timeline and in chosen countries.
     Beneath graph 1 is a graph describing the same numbers,
-    but in rates of cases per capita million",
+    but in rates of cases per capita million -
+    NB: Registry corrections may occur,
+    will be indicated as days with falling total number of cases",
     br(),
     paste0(c("- With thanks to P-Lars, The Bear and L man",
              emo::ji("man_dancing_medium_dark_skin_tone")
@@ -97,6 +99,24 @@ sidebarPanelUI <- function(){
                 selected = c("Denmark",
                              "Sweden"),
                 multiple = TRUE),
+    br(), br(), br(),br(),br(),br(),br(),
+    h3(strong("Daily Cases - negative numbers are corrected to 0")),
+    dateRangeInput("daterange4",
+                   "Date Range",
+                   "2020-01-22",
+                   "2021-04-18",
+                   "2020-01-22",
+                   "2021-04-18"),
+    selectInput("countries4",
+                "Countries",
+                unique(corona_data$confirmed$country),
+                selected = c("Denmark",
+                             "Sweden"),
+                multiple = TRUE),
+    radioButtons("graph4",
+                 "Graph",
+                 choices = c("Confirmed Cases",
+                             "Confirmed Deaths")),
     width = 3
   )
 }
@@ -115,5 +135,7 @@ mainPanelUI <- function(){
     br(), br(), br(),
     plotly::plotlyOutput("coolplot2"),
     br(), br(), br(),
-    plotly::plotlyOutput("coolplot3"), width = 9)
+    plotly::plotlyOutput("coolplot3"),
+    br(), br(), br(),
+    plotly::plotlyOutput("coolplot4"), width = 9)
 }

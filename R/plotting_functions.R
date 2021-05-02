@@ -62,9 +62,18 @@ renderPlot_function <- function(input, plot_type){
       data_value <- "value_fatality_rate"
       title <- "Fatality Rate"
       y_lab <- "Deaths per Confirmed Case - pct"
+    } else if(plot_type == "daily_cases") {
+      graph_choice <- input$graph4
+      country_list <- input$countries4
+      date_range_start <- input$daterange4[1]
+      date_range_end <- input$daterange4[2]
+      data_value <- "daily_value"
+      title <- "Daily Cases"
+      y_lab <- "Number of Daily Cases"
     } else {
       stop("No plot type chosen")
     }
+
 
     if(graph_choice == "Confirmed Cases"){
       temp <- corona_data$confirmed

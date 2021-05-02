@@ -13,3 +13,11 @@ TODO: - Needs server updating data - dropbox possible for remote data access but
 TODO: Make map visualization, leaflet - look at john hopkins
 TODO: Hospitalizations?
 TODO: interactive plots - plot_ly
+
+TODO: Forecasting - tidymodels xgboost?
+TODO: - training on database side, prediction on database side or server side? - send model and prediction funciton to server https://www.tidymodels.org/start/case-study/
+
+TODO: refactoring - put all data in one dataframe with new column names etc 
+
+TODO: daily change in cases - histogram?
+
