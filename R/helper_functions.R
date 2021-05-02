@@ -116,6 +116,29 @@ convert_to_long <- function(data, extra_col){
 }
 
 
+#' @title create_daily_cases
+#' @description creates columns with daily case numbers
+#'
+#' @param data dataframe with converted data
+#'
+#' @return
+#' @export
+create_daily_cases <- function(data) {
+  confirmed_converted_delta <- data.frame()
+  for (country_i in unique(data$country)) {
+    temp <- data %>%
+      filter(country == country_i)
+    for (i in 1:nrow(temp)) {
+      temp$daily_value[i] <- temp$value[i]-temp$value[i-1]
+      temp$daily_value[temp$daily_value %>% is.null()] <- 0
+    }
+    confirmed_converted_delta <- bind_rows(confirmed_converted_delta, temp)
+  }
+  confirmed_converted_delta[confirmed_converted_delta$daily_value < 0] <- 0
+  confirmed_converted_delta
+}
+
+
 #' @title data_prep_wrapper
 #' @description wrapper function for data prep
 #'
@@ -170,6 +193,9 @@ data_prep_wrapper <- function(url_confirmed, url_deaths){
     mutate(value_fatality_rate = (.data$value_deaths/.data$value)*100)
   collected$value_fatality_rate[is.nan(collected$value_fatality_rate)] <- NA
 
+  confirmed_converted <- create_daily_cases(data = confirmed_converted)
+  deaths_converted <- create_daily_cases(data = deaths_converted)
+
   data <- list(
     confirmed = confirmed_converted,
     deaths = deaths_converted,
@@ -179,3 +205,26 @@ data_prep_wrapper <- function(url_confirmed, url_deaths){
 }
 
 
+
+# library(tidymodels)
+# library(vip)
+# library(modeltime)
+# library(timetk)
+# predict_cases <- function(data, ){
+#   splits_DK <- confirmed_converted %>%
+#     filter(country %in% "Denmark") %>%
+#
+#
+#
+#
+#
+# }
+
+# tt <- create_daily_cases(data = confirmed_converted_orig)
+#
+#
+# confirmed_converted_delta %>%
+#   filter(country == "Denmark") %>%
+#   ggplot(aes(date, daily_value, color = country)) +
+#   geom_point()
+#
