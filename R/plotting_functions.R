@@ -37,7 +37,6 @@ create_labels <- function(country_list){
 #' @export
 renderPlot_function <- function(input, plot_type){
   renderPlotly({
-
     if(plot_type == "case_number"){
       graph_choice <- input$graph
       country_list <- input$countries
@@ -46,6 +45,13 @@ renderPlot_function <- function(input, plot_type){
       data_value <- "value"
       title <- "Cases"
       y_lab <- "Number of Cases"
+      create_graph_non_forecast(graph_choice,
+                                country_list,
+                                date_range_start,
+                                date_range_end,
+                                data_value,
+                                title,
+                                y_lab)
     } else if (plot_type == "cases_pr_citizen") {
       graph_choice <- input$graph2
       country_list <- input$countries2
@@ -54,6 +60,13 @@ renderPlot_function <- function(input, plot_type){
       data_value <- "value_pr_cap"
       title <- "Cases per 100,000 citizens"
       y_lab <- "Number of Cases per 100,000 Citizens"
+      create_graph_non_forecast(graph_choice,
+                                country_list,
+                                date_range_start,
+                                date_range_end,
+                                data_value,
+                                title,
+                                y_lab)
     } else if(plot_type == "fatality_rate") {
       graph_choice <- "fatality_rate"
       country_list <- input$countries3
@@ -62,6 +75,13 @@ renderPlot_function <- function(input, plot_type){
       data_value <- "value_fatality_rate"
       title <- "Fatality Rate"
       y_lab <- "Deaths per Confirmed Case - pct"
+      create_graph_non_forecast(graph_choice,
+                                country_list,
+                                date_range_start,
+                                date_range_end,
+                                data_value,
+                                title,
+                                y_lab)
     } else if(plot_type == "daily_cases") {
       graph_choice <- input$graph4
       country_list <- input$countries4
@@ -70,44 +90,159 @@ renderPlot_function <- function(input, plot_type){
       data_value <- "daily_value"
       title <- "Daily Cases"
       y_lab <- "Number of Daily Cases"
+      create_graph_non_forecast(graph_choice,
+                                country_list,
+                                date_range_start,
+                                date_range_end,
+                                data_value,
+                                title,
+                                y_lab)
+    } else if (plot_type == "case_number_forecast") {
+      graph_choice <- input$graph5
+      country_list <- input$countries5
+      date_range_start <- input$daterange5[1]
+      date_range_end <- input$daterange5[2]
+      forecast_horizon <- input$slider1
+      models <- input$models
+      data_value <- "value"
+      title <- "Cases - with forecast"
+      y_lab <- "Number of Cases"
+      create_graph_forecast(graph_choice,
+                            country_list,
+                            date_range_start,
+                            date_range_end,
+                            data_value,
+                            models,
+                            title,
+                            y_lab,
+                            forecast_horizon
+      )
     } else {
       stop("No plot type chosen")
     }
 
-
-    if(graph_choice == "Confirmed Cases"){
-      temp <- corona_data$confirmed
-    } else if(graph_choice == "Confirmed Deaths"){
-      temp <- corona_data$deaths
-    } else if(graph_choice == "fatality_rate"){
-      temp <- corona_data$collected
-    } else {
-      stop("Wrong graph choice")
-    }
-
-    temp <- temp %>%
-      filter(.data$country %in% country_list) %>%
-      filter(date >= date_range_start,
-             date <= date_range_end) %>%
-      arrange(.data$country)
-
-    country_list <- sort(country_list)
-    legend_labels <- create_labels(country_list)
-
-    p <- temp %>%
-      ggplot(aes_string("date",
-                        paste0(data_value),
-                        color = "country")) +
-      geom_point() +
-      xlab("Date Range") +
-      ylab(y_lab) +
-      ggtitle(title) +
-      scale_x_date(breaks = scales::pretty_breaks(n = 10)) +
-      scale_y_continuous(labels = scales::comma,
-                         breaks = scales::pretty_breaks(n = 10)) +
-      labs(color = "Countries") +
-      scale_colour_discrete(labels = legend_labels)
-    plotly::ggplotly(p)
-
   })
+}
+
+
+#' Title
+#'
+#' @param graph_choice choice of graph
+#' @param country_list countries chosen
+#' @param date_range_start date start
+#' @param date_range_end date end
+#' @param data_value column with data
+#' @param title title
+#' @param y_lab y axis label
+#' @param models models to forecast
+#' @param forecast_horizon forecast time in days
+#'
+#' @return plot of country with forecasts
+#' @export
+create_graph_forecast <- function(graph_choice,
+                                  country_list,
+                                  date_range_start,
+                                  date_range_end,
+                                  data_value,
+                                  models,
+                                  title,
+                                  y_lab,
+                                  forecast_horizon) {
+
+  if(graph_choice == "Confirmed Cases"){
+    temp <- corona_data$confirmed
+  } else if(graph_choice == "Confirmed Deaths"){
+    temp <- corona_data$deaths
+  } else {
+    stop("Wrong graph choice")
+  }
+
+  # assertthat::assert_that(any(c("ARIMA(0,2,1)(0,0,2)[7]",
+  #                               "PROPHET",
+  #                               "GLMNET",
+  #                               "RANDOMFOREST",
+  #                               "PROPHET W/ XGBOOST ERRORS") %in% models))
+
+  country_data <- temp %>%
+    filter(.data$country %in% country_list) %>%
+    select(date, .data$value) %>%
+    mutate(date = as.Date(date)) %>%
+    as_tibble()
+
+  calibration_table <- create_country_models(country_data = country_data,
+                                             n = 20)
+
+  country_data <- country_data %>%
+    filter(date > date_range_start,
+           date < date_range_end)
+
+  p <- calibration_table %>%
+    # Remove RANDOMFOREST model with low accuracy
+    # filter(.model_desc %in% models) %>% # Not correct format?
+    # Refit and Forecast Forward
+    #  modeltime_refit(country_data) %>%
+    modeltime_forecast(h = forecast_horizon,
+                       actual_data = country_data) %>%
+    plot_modeltime_forecast(.interactive = TRUE,
+                            .conf_interval_show = FALSE,
+                            .title = title,
+                            .y_lab = y_lab)
+
+  p
+}
+
+
+#' Title
+#'
+#' @param graph_choice choice of graph
+#' @param country_list countries chosen
+#' @param date_range_start date start
+#' @param date_range_end date end
+#' @param data_value column with data
+#' @param title title
+#' @param y_lab y axis label
+#'
+#' @return graphs without forecasts
+#' @export
+create_graph_non_forecast <- function(graph_choice,
+                                      country_list,
+                                      date_range_start,
+                                      date_range_end,
+                                      data_value,
+                                      title,
+                                      y_lab) {
+  if(graph_choice == "Confirmed Cases"){
+    temp <- corona_data$confirmed
+  } else if(graph_choice == "Confirmed Deaths"){
+    temp <- corona_data$deaths
+  } else if(graph_choice == "fatality_rate"){
+    temp <- corona_data$collected
+  } else {
+    stop("Wrong graph choice")
+  }
+
+  temp <- temp %>%
+    filter(.data$country %in% country_list) %>%
+    filter(date >= date_range_start,
+           date <= date_range_end) %>%
+    arrange(.data$country)
+
+  country_list <- sort(country_list)
+  legend_labels <- create_labels(country_list)
+
+  p <- temp %>%
+    ggplot(aes_string("date",
+                      paste0(data_value),
+                      color = "country")) +
+    geom_point() +
+    xlab("Date Range") +
+    ylab(y_lab) +
+    ggtitle(title) +
+    scale_x_date(breaks = scales::pretty_breaks(n = 10)) +
+    scale_y_continuous(labels = scales::comma,
+                       breaks = scales::pretty_breaks(n = 10)) +
+    labs(color = "Countries") +
+    scale_colour_discrete(labels = legend_labels)
+  plotly::ggplotly(p)
+
 }

@@ -121,13 +121,13 @@ convert_to_long <- function(data, extra_col){
 #'
 #' @param data dataframe with converted data
 #'
-#' @return
+#' @return daily cases
 #' @export
 create_daily_cases <- function(data) {
   confirmed_converted_delta <- data.frame()
   for (country_i in unique(data$country)) {
     temp <- data %>%
-      filter(country == country_i)
+      filter(.data$country == country_i)
     for (i in 1:nrow(temp)) {
       temp$daily_value[i] <- temp$value[i]-temp$value[i-1]
       temp$daily_value[temp$daily_value %>% is.null()] <- 0

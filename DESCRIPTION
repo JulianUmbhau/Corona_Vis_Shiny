@@ -16,12 +16,24 @@ Imports:
     dplyr,
     tidyr,
     testthat,
-    magrittr,
     shiny,
     ggplot2,
     assertthat,
     scales,
     emo,
     pkgload,
-    plotly
+    plotly,
+    tidymodels,
+    modeltime,
+    timetk,
+    glmnet,
+    randomForest,
+    parsnip,
+    recipes,
+    rsample,
+    tidyverse,
+    workflows
+Suggests:
+    readr,
+    lubridate
 Config/testthat/edition: 3

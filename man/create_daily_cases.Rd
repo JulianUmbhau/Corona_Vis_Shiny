@@ -10,7 +10,7 @@ create_daily_cases(data)
 \item{data}{dataframe with converted data}
 }
 \value{
-
+daily cases
 }
 \description{
 creates columns with daily case numbers
