@@ -134,7 +134,7 @@ create_daily_cases <- function(data) {
     }
     confirmed_converted_delta <- bind_rows(confirmed_converted_delta, temp)
   }
-  confirmed_converted_delta[confirmed_converted_delta$daily_value < 0] <- 0
+  confirmed_converted_delta$daily_value[confirmed_converted_delta$daily_value < 0] <- 0
   confirmed_converted_delta
 }
 
