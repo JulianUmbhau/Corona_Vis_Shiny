@@ -1,6 +1,6 @@
 library(rsconnect)
 
-rsconnect_data <- readRDS("/home/rstudio/Corona_Vis_Shiny/scripts/rsconnect_data.rds")
+rsconnect_data <- readRDS("./scripts/rsconnect_data.rds")
 
 setAccountInfo(name=rsconnect_data$name,
                 token=rsconnect_data$token, 
