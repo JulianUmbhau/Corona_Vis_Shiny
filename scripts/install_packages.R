@@ -21,5 +21,6 @@ install.packages("tidyverse")
 install.packages("modeltime")
 install.packages("workflows")
 install.packages("devtools")
+install.packages("rstudioapi")
 devtools::install_github("hadley/emo")
 
