@@ -1,12 +1,20 @@
 # Corona_visualization in Shiny
 
-## How to set up as shiny application (TBD)
-- Build app through "Myapp" function
-- Upload app data via publish function
+
 
 ## Manual on loading data and building package (TBD)
 - remember to comment out after downloading data ### HACK
 - 
+
+## Changes TBD
+- excess mortality vis - data?
+
+## create file with shiny login data separate from github repo - copy over file to container through docker run command
+- ensure azure access to file - store file in registry?
+
+## Dockerfile
+- install package bioconductor to newest version
+
 
 TODO: continuous data update - https://towardsdatascience.com/how-to-build-r-shiny-apps-that-update-themselves-6ce2d9606e90
 TODO: - Needs server updating data - dropbox possible for remote data access but unsafe
