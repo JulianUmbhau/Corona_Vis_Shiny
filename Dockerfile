@@ -8,6 +8,32 @@ WORKDIR /home/rstudio/Corona_Vis_Shiny/
 
 RUN chmod 777 -R /home/
 
+RUN install2.r --error \
+  rvest \
+  dplyr \
+  tidyr \
+  assertthat \
+  usethis \
+  shiny \
+  rsconnect \
+  pkgload \
+  testthat \
+  ggplot2 \
+  scales \
+  plotly \
+  tidymodels \
+  timetk \
+  glmnet \
+  randomForest \
+  parsnip \
+  recipes \
+  rsample \
+  tidyverse \
+  modeltime \
+  workflows \
+  devtools \
+  rstudioapi
+
 RUN Rscript /home/rstudio/Corona_Vis_Shiny/scripts/install_packages.R
 
 RUN R CMD build /home/rstudio/Corona_Vis_Shiny/
