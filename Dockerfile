@@ -1,4 +1,4 @@
-FROM rocker/tidyverse
+FROM rocker/rstudio
 
 RUN mkdir -p /home/rstudio/data /home/rstudio/output 
 
@@ -35,6 +35,7 @@ RUN install2.r --error \
   rstudioapi
 
 RUN Rscript /home/rstudio/Corona_Vis_Shiny/scripts/install_packages.R
+RUN /home/rstudio/Corona_Vis_Shiny/scripts/system_dependencies.sh
 
 RUN R CMD build /home/rstudio/Corona_Vis_Shiny/
 RUN R CMD INSTALL /home/rstudio/Corona_Vis_Shiny/CoronaVisualisation_0.1.0.tar.gz
