@@ -1,0 +1,25 @@
+on: 
+  # Triggers the workflow on push or pull request events but only for the main branch
+  #push:
+  #  branches: [ main , hello-world]
+  pull_request:
+    types: [labeled]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  update_corona_shiny_vis:
+    runs-on: ubuntu-latest
+    name: Deploys Shiny Corona Vis
+    steps:
+      # To use this repository's private action,
+      # you must check out the repository
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Docker build
+        uses: ./.github/actions/shinyapps_updater
+        id: updater
+        env:
+          RSCONNECT_TOKEN: ${{ secrets.RSCONNECT_TOKEN }}
+          RSCONNECT_SECRET: ${{ secrets.RSCONNECT_SECRET }}

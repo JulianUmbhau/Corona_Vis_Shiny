@@ -1,4 +1,4 @@
-FROM rocker/rstudio
+FROM rocker/tidyverse
 
 RUN mkdir -p /home/rstudio/data /home/rstudio/output 
 
@@ -28,7 +28,6 @@ RUN install2.r --error \
   parsnip \
   recipes \
   rsample \
-  tidyverse \
   modeltime \
   workflows \
   devtools \
