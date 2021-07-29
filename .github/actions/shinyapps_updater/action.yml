@@ -1,0 +1,18 @@
+name: "Shinyapps updater action"
+
+description: "update shinyapps with docker action "
+
+inputs:
+  firstGreeting:
+    description: "who would you like to greet in the console"
+    required: true
+    default: '2C37B4019E3B949BE5D490DDAC59A196'
+
+  secondGreeting:
+    description: "another person to greet"
+    required: true
+    default: 'xst+aZ/6zTvuuNnOcbkVq9NAju+0uPyrqf4yfPoB'
+
+runs:
+  using: "docker"
+  image: "../../Dockerfile"
