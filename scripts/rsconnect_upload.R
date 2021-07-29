@@ -1,9 +1,9 @@
 library(rsconnect)
 
-token <- Sys.getenv("SECRETS.TOKEN")
-secret <- Sys.getenv("SECRETS.TOKEN")
+token <- Sys.getenv("SECRETS_RSCONNECT_TOKEN")
+secret <- Sys.getenv("SECRETS_RSCONNECT_SECRET")
 
-if(any(c(token,secret)) == ""){
+if(any(c(token,secret) == "")){
     token <- Sys.getenv("INPUT_FIRSTGREETING")
     secret <- Sys.getenv("INPUT_SECONDGREETING")
 }
