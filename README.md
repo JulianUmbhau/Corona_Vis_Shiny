@@ -21,17 +21,13 @@ To use:
 ## Dockerfile
 - install package bioconductor to newest version
 
-
-TODO: continuous data update - https://towardsdatascience.com/how-to-build-r-shiny-apps-that-update-themselves-6ce2d9606e90
-TODO: - Needs server updating data - dropbox possible for remote data access but unsafe
 TODO: Make map visualization, leaflet - look at john hopkins
 TODO: Hospitalizations?
-TODO: interactive plots - plot_ly
+TODO: daily change in cases - histogram?
 
 TODO: Forecasting - tidymodels xgboost?
 TODO: - training on database side, prediction on database side or server side? - send model and prediction funciton to server https://www.tidymodels.org/start/case-study/
 
 TODO: refactoring - put all data in one dataframe with new column names etc 
 
-TODO: daily change in cases - histogram?
-
+TODO: downsize dockerimage
