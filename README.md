@@ -30,4 +30,4 @@ TODO: - training on database side, prediction on database side or server side? -
 
 TODO: refactoring - put all data in one dataframe with new column names etc 
 
-TODO: downsize dockerimage
+TODO: downsize dockerimage - too many API requests in docker container
