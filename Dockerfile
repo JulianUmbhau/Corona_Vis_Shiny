@@ -12,7 +12,6 @@ RUN install2.r --error \
   rvest \
   dplyr \
   tidyr \
-  assertthat \
   usethis \
   shiny \
   rsconnect \

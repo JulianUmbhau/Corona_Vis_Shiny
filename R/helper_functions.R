@@ -57,22 +57,22 @@ obtain_country_data <- function(){
 #' @param data dataset containing case data
 #' @param country_data dataset containing country data
 #'
-#' @import assertthat
-#'
 #' @return merged dataset prepared for plotting
 #' @export
 data_prep <- function(data, country_data){
-  if(!assertthat::has_name(x = data,
-                           which = c("Country.Region",
-                                     "Province.State"))){
-    stop("Missing variables")
+  stopifnot(c("Country.Region",
+              "Province.State") %in% 
+              names(data))
+  
+  stopifnot("country" %in% names(country_data))
+  
+  if(nrow(data) == 0) {
+    stop("data is empty")
   }
-  stopifnot(assertthat::has_name(x = country_data,
-                                 which = "country")
-  )
-  stopifnot(assertthat::not_empty(data))
-  stopifnot(assertthat::not_empty(country_data))
-
+  if(nrow(country_data) == 0) {
+    stop("country_data is empty")
+  }
+  
   navne <- names(data)
   navne <- sub("X","",navne)
   navne <- gsub("\\.","-",navne)

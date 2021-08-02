@@ -157,12 +157,6 @@ create_graph_forecast <- function(graph_choice,
     stop("Wrong graph choice")
   }
 
-  # assertthat::assert_that(any(c("ARIMA(0,2,1)(0,0,2)[7]",
-  #                               "PROPHET",
-  #                               "GLMNET",
-  #                               "RANDOMFOREST",
-  #                               "PROPHET W/ XGBOOST ERRORS") %in% models))
-
   country_data <- temp %>%
     filter(.data$country %in% country_list) %>%
     select(date, .data$value) %>%

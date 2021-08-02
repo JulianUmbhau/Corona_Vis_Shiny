@@ -6,3 +6,4 @@
 ^\./inst/rsconnect/shinyapps\.io/julian-johannes-umbhau-jensen/Corona_visualization_shiny\.dcf$
 ^\.httr-oauth$
 ^token\.rds$
+^\.github$

@@ -3,7 +3,7 @@
 #' @param country_data data with countries to forecast on
 #' @param n forecast horizon
 #'
-#' @import dplyr tidymodels tidyverse timetk modeltime
+#' @import dplyr tidymodels timetk modeltime
 #' @importFrom parsnip set_engine fit linear_reg rand_forest fit
 #' @importFrom rsample training
 #' @importFrom recipes recipe step_rm step_dummy all_nominal
