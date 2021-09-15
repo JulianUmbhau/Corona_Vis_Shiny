@@ -4,12 +4,12 @@ description: "update shinyapps with docker action "
 
 inputs:
   firstGreeting:
-    description: "who would you like to greet in the console"
+    description: "rsconnect token"
     required: true
     default: 'token'
 
   secondGreeting:
-    description: "another person to greet"
+    description: "rsconnect secret"
     required: true
     default: 'secret'
 
