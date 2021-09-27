@@ -1,4 +1,4 @@
-FROM corona_vis_base:latest
+FROM umbhau/corona_vis_shiny:1.0
 
 RUN mkdir -p /home/rstudio/data /home/rstudio/output 
 
