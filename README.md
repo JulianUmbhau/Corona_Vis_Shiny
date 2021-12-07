@@ -16,4 +16,4 @@ In order to use the repo:
 - run docker container
 
 ## Live dashboard
-https://julian-johannes-umbhau-jensen.shinyapps.io/workspace/
+https://julian-johannes-umbhau-jensen.shinyapps.io/workspace/ (long load time for visuals, due to wake up from hibernation)
