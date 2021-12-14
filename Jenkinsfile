@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    triggers {
+        cron ("0/10 0 0 ? * * *")
+    }
     environment {
         NEW_VERSION = "1.3.0"
         SERVER_CREDENTIALS = credentials("global-umbhau")
