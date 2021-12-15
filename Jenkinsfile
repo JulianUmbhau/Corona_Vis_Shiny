@@ -5,6 +5,7 @@ pipeline {
     environment {
         NEW_VERSION = "1.3.0"
         SERVER_CREDENTIALS = credentials("jenkins_tutorial_github")
+        GIT_CREDENTIALS = credentials("jenkins_tutorial_github")
     }
     parameters {
         choice(name: "VERSION", choices:["1.1.0","1.2.0"], description: "parameters test")
@@ -19,11 +20,10 @@ pipeline {
                 sh '''
                     echo "checkout branch"
                 '''
-                git 'https://github.com/JulianUmbhau/Corona_Vis_Shiny.git'
+                git credentialsId: env.GIT_CREDENTIALS, url: 'https://github.com/JulianUmbhau/Corona_Vis_Shiny.git', branch: main
                 sh '''
                     echo "Building version ${NEW_VERSION}"
-                '''
-                
+                '''   
             }
         }
 
