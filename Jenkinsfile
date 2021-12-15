@@ -20,7 +20,6 @@ pipeline {
                 sh '''
                     echo "checkout branch"
                 '''
-                echo env.GIT_CREDENTIALS
                 git credentialsId: env.GIT_CREDENTIALS, url: 'https://github.com/JulianUmbhau/Corona_Vis_Shiny.git', branch: main
                 sh '''
                     echo "Building version ${NEW_VERSION}"
@@ -30,21 +29,17 @@ pipeline {
         stage("build") {
             when {
                 expression {
-                    env.BRANCH_NAME == "main" || BRANCH_NAME == "dev"
+                    env.BRANCH_NAME == "main"
                 }
             }
         
             steps {
-                script {
-                    gv.buildApp()
-                }
-
+                dir("."){
+                    script{
+                        dockerImage = docker.build("coronavis")
+                    }
+                }            
                 echo "build app"
-
-                script {
-                    dockerImage = docker.build coronavis
-                }
-
             }
         }
     }
