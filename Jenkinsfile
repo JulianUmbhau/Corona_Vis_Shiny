@@ -13,16 +13,11 @@ pipeline {
     }
 
     stages {
-
         stage("checkout") {
-            
             steps {
                 sh '''
                     echo "checkout branch"
                 '''
-                sh "pwd"
-                sh "ls"
-                sh "docker build -t coronavis ."
                 sh '''
                     echo "Building version ${NEW_VERSION}"
                 '''   
@@ -36,12 +31,13 @@ pipeline {
             }
         
             steps {
-                dir("."){
-                    script{
-                        dockerImage = docker.build("coronavis")
-                    }
-                }            
+                sh "docker build -t coronavis ."
                 echo "build app"
+            }
+        }
+        stage("deploy") {
+            steps {
+                echo "deploying with secrets"
             }
         }
     }

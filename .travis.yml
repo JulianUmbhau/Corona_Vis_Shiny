@@ -4,6 +4,9 @@ cache: packages
 apt_packages:
   - libxml2-dev
 
+install:
+  - R -e "devtools::install_github('hadley/emo')"
+
 r_github_packages:
   - hadley/emo
 
