@@ -19,6 +19,7 @@ pipeline {
                 sh '''
                     echo "checkout branch"
                 '''
+                git 'https://github.com/JulianUmbhau/Corona_Vis_Shiny.git'
                 sh '''
                     echo "Building version ${NEW_VERSION}"
                 '''
