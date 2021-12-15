@@ -45,10 +45,12 @@ pipeline {
                 script {
                     gv.buildApp()
                 }
+
+                echo "build app"
+
                 script {
                     dockerImage = docker.build coronavis
                 }
-                echo "build app"
 
             }
         }
