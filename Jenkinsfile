@@ -59,11 +59,6 @@ pipeline {
         stage("deploy") {
             steps {
                 echo "deploy app"
-                // withCredentials([
-                //    usernamePassword(credentials: 'global-umbhau', usernameVariable: USER, passwordVariable: PWD)
-                // ]) {
-                //    echo "${USER}"
-                //}
                 echo "deploying version ${params.VERSION}"
             }
 
