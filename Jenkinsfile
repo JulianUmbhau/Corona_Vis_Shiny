@@ -20,21 +20,13 @@ pipeline {
                 sh '''
                     echo "checkout branch"
                 '''
+                echo env.GIT_CREDENTIALS
                 git credentialsId: env.GIT_CREDENTIALS, url: 'https://github.com/JulianUmbhau/Corona_Vis_Shiny.git', branch: main
                 sh '''
                     echo "Building version ${NEW_VERSION}"
                 '''   
             }
         }
-
-        stage("init") {
-            steps {
-                script {
-                    gv = load "script.groovy"
-                }
-            }
-        }
-
         stage("build") {
             when {
                 expression {
@@ -55,26 +47,6 @@ pipeline {
 
             }
         }
-
-        stage("test") {
-            when {
-                expression {
-                    params.executeTest == true
-                }
-            }
-            steps {
-                echo "testing"
-            }
-        }
-
-        stage("deploy") {
-            steps {
-                echo "deploy app"
-                echo "deploying version ${params.VERSION}"
-            }
-
-        }
-
     }
     post {
         always {
