@@ -44,9 +44,10 @@ pipeline {
             steps {
                 script {
                     gv.buildApp()
+                    customImage = docker.build("coronavis:${env.BUILD_ID}")
+
                 }
                 echo "build app"
-                def customImage = docker.build("coronavis:${env.BUILD_ID}")
 
             }
         }
