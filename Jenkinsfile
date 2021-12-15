@@ -20,7 +20,9 @@ pipeline {
                 sh '''
                     echo "checkout branch"
                 '''
-                sh "docker ps"
+                sh "pwd"
+                sh "ls"
+                sh "docker build -t coronavis ."
                 sh '''
                     echo "Building version ${NEW_VERSION}"
                 '''   
