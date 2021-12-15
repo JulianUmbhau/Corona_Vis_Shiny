@@ -20,6 +20,7 @@ pipeline {
                 sh '''
                     echo "checkout branch"
                 '''
+                sh "docker ps"
                 sh '''
                     echo "Building version ${NEW_VERSION}"
                 '''   
