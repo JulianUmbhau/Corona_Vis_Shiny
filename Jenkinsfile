@@ -34,11 +34,6 @@ pipeline {
             }
         
             steps {
-                dir("."){
-                    script{
-                        dockerImage = docker.build("coronavis")
-                    }
-                }            
                 echo "build app"
             }
         }
