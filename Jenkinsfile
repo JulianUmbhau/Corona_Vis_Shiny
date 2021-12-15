@@ -1,4 +1,6 @@
+// CODE_CHANGES = getGitChanges()
 pipeline {
+    
     agent any
     environment {
         NEW_VERSION = "1.3.0"
@@ -8,6 +10,7 @@ pipeline {
         choice(name: "VERSION", choices:["1.1.0","1.2.0"], description: "parameters test")
         booleanParam(name: "executeTest", defaultValue: true, description: "test execution param")
     }
+
     stages {
 
         stage("checkout") {
@@ -72,4 +75,5 @@ pipeline {
             echo "always"
         }
     }
+
 }
