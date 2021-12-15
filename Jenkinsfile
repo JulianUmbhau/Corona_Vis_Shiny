@@ -20,7 +20,6 @@ pipeline {
                 sh '''
                     echo "checkout branch"
                 '''
-                git credentialsId: env.GIT_CREDENTIALS, url: 'https://github.com/JulianUmbhau/Corona_Vis_Shiny.git', branch: main
                 sh '''
                     echo "Building version ${NEW_VERSION}"
                 '''   
@@ -34,6 +33,11 @@ pipeline {
             }
         
             steps {
+                dir("."){
+                    script{
+                        dockerImage = docker.build("coronavis")
+                    }
+                }            
                 echo "build app"
             }
         }
