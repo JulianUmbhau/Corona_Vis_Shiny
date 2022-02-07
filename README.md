@@ -1,4 +1,4 @@
-# Corona_visualization in Shiny
+# Corona Visualization in Shiny
 
 Visualization of corona data on country level.
 Shows confirmed cases, confirmed deaths, daily rate, fatality rate and forecasting of cases and deaths for the countries chosen.
