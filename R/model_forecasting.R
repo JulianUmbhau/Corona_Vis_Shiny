@@ -16,18 +16,19 @@ create_country_models <- function(country_data, n) {
     mutate(date = as.Date(date)) %>%
     select(date, .data$value) %>%
     as_tibble()
-  
+
   splits <- data_filtered %>%
-    time_series_split(assess = paste0(n," days"), cumulative = TRUE)
-  
+    time_series_split(assess = paste0(n," days"),
+                      cumulative = TRUE)
+
   model_fit_arima <- arima_reg() %>%
     set_engine("auto_arima") %>%
     fit(value ~ date, training(splits))
-  
+
   model_fit_prophet <- prophet_reg() %>%
     set_engine("prophet", yearly.seasonality = TRUE) %>%
     fit(value ~ date, training(splits))
-  
+
   recipe_spec <- recipe(value ~ date,
                         training(splits)) %>%
     step_timeseries_signature(date) %>%
@@ -38,36 +39,36 @@ create_country_models <- function(country_data, n) {
             contains("xts")) %>%
     step_fourier(date, period = 365, K = 5) %>%
     step_dummy(all_nominal())
-  
+
   model_spec_glmnet <- linear_reg(penalty = 0.01,
                                   mixture = 0.5) %>%
     set_engine("glmnet")
-  
+
   workflow_fit_glmnet <- workflow() %>%
     add_model(model_spec_glmnet) %>%
     add_recipe(recipe_spec %>% step_rm(date)) %>%
     fit(training(splits))
-  
-  
+
+
   # Random forest
   model_spec_rf <- rand_forest(trees = 500, min_n = 50) %>%
     set_engine("randomForest")
-  
+
   workflow_fit_rf <- workflow() %>%
     add_model(model_spec_rf) %>%
     add_recipe(recipe_spec %>% step_rm(date)) %>%
     fit(training(splits))
-  
-  
+
+
   # prophet boost
   model_spec_prophet_boost <- prophet_boost() %>%
     set_engine("prophet_xgboost", yearly.seasonality = TRUE)
-  
+
   workflow_fit_prophet_boost <- workflow() %>%
     add_model(model_spec_prophet_boost) %>%
     add_recipe(recipe_spec) %>%
     fit(training(splits))
-  
+
   ## eval
   model_table <- modeltime_table(
     model_fit_arima,
@@ -76,7 +77,7 @@ create_country_models <- function(country_data, n) {
     workflow_fit_rf,
     workflow_fit_prophet_boost
   )
-  
+
   model_table
 }
 
@@ -105,14 +106,14 @@ forecast_on_country_premodelled <- function(data,
                                             forecast_horizon,
                                             calibration_table) {
   stopifnot(c("RF", "GLMNet") %in% models)
-  
+
   country_data <- corona_data$confirmed %>%
     filter(country %in% country) %>%
     select(date, .data$value) %>%
     mutate(date = as.Date(date)) %>%
     as_tibble()
-  
-  
+
+
   calibration_table %>%
     # Remove RANDOMFOREST model with low accuracy
     filter(.data$.model_id != 2) %>%
