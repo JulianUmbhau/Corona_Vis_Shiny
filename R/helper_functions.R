@@ -100,19 +100,40 @@ data_prep <- function(data, country_data){
 #' @return dataset converted to long
 #' @export
 convert_to_long <- function(data, extra_col){
-  long <- data %>%
-    dplyr::select(-all_of(c("Long",
-                            "Lat",
-                            "province"))
-    ) %>%
-    tidyr::gather(key = "date",
-                  value = "value",
-                  -all_of(c(extra_col))) %>%
-    mutate(date = as.Date(x = date, format = "%m-%d-%y"))
-  long <- aggregate(. ~ date+country+population+pop_per_km2+land_area+median_age+urban_pop_pct,
-                    data=long,
-                    FUN=sum)
-  return(long)
+  cleaned_data <- data %>%
+    dplyr::select(
+      -all_of(c("Long",
+                "Lat",
+                "province"))) %>%
+    tidyr::gather(
+      key = "date",
+      value = "value",
+      -all_of(c(extra_col))) %>%
+    mutate(date = as.Date(
+      x = date, 
+      format = "%m-%d-%y"))
+  
+  long <- cleaned_data %>%
+    group_by(date, country, population, pop_per_km2, land_area, median_age, urban_pop_pct) %>%
+    summarize(value = sum(value)) %>%
+    ungroup() %>%
+    na.omit() %>%
+    as.data.frame()
+  
+  # long <- aggregate(
+  #   value ~ date+country+population+pop_per_km2+land_area+median_age+urban_pop_pct,
+  #   data=cleaned_data,
+  #   FUN=sum)
+
+  
+  na_countries <- unique(cleaned_data$country) %in% unique(long$country)
+  missing_countries <- unique(cleaned_data$country)[!na_countries]
+  
+  output = list(
+    data=long,
+    missing_countries=missing_countries)
+  
+  return(output)
 }
 
 
@@ -124,16 +145,21 @@ convert_to_long <- function(data, extra_col){
 #' @return daily cases
 #' @export
 create_daily_cases <- function(data) {
+  
   confirmed_converted_delta <- data.frame()
+  
   for (country_i in unique(data$country)) {
     temp <- data %>%
       filter(.data$country == country_i)
+    
     for (i in 1:nrow(temp)) {
       temp$daily_value[i] <- temp$value[i]-temp$value[i-1]
       temp$daily_value[temp$daily_value %>% is.null()] <- 0
     }
+    
     confirmed_converted_delta <- bind_rows(confirmed_converted_delta, temp)
   }
+  
   confirmed_converted_delta$daily_value[confirmed_converted_delta$daily_value < 0] <- 0
   confirmed_converted_delta
 }
@@ -151,51 +177,54 @@ create_daily_cases <- function(data) {
 #' @return dataset containing cases and country data
 #' @export
 data_prep_wrapper <- function(url_confirmed, url_deaths){
-
+  
   confirmed_cases <- read.csv(url_confirmed)
-
+  
   deaths <- read.csv(url_deaths)
-
+  
   df_full <- suppressWarnings(obtain_country_data())
-
+  
   confirmed_cases <- data_prep(data = confirmed_cases,
                                country_data = df_full)
-
+  
   deaths <- data_prep(data = deaths,
                       country_data = df_full)
-
+  
   extra_col <- c("country",
                  "population",
                  "pop_per_km2",
                  "land_area",
                  "median_age",
                  "urban_pop_pct")
-
-  confirmed_converted <- convert_to_long(data = confirmed_cases,
+  
+  confirmed_converted_list <- convert_to_long(data = confirmed_cases,
                                          extra_col = extra_col)
-  deaths_converted <- convert_to_long(data = deaths,
+  deaths_converted_list <- convert_to_long(data = deaths,
                                       extra_col = extra_col)
-
+  
+  confirmed_converted <- confirmed_converted_list$data
+  deaths_converted <- deaths_converted_list$data
+  
   confirmed_converted <- confirmed_converted %>%
     mutate(value_pr_cap = (.data$value/.data$population)*100000)
   deaths_converted <- deaths_converted %>%
     mutate(value_pr_cap = (.data$value/.data$population)*100000)
-
+  
   variables_kept <- c("date",
                       "country",
                       "value")
-
+  
   collected <- left_join(confirmed_converted,
                          deaths_converted %>%
                            select(all_of(variables_kept)) %>%
                            rename(value_deaths = .data$value)
-                         ) %>%
+  ) %>%
     mutate(value_fatality_rate = (.data$value_deaths/.data$value)*100)
   collected$value_fatality_rate[is.nan(collected$value_fatality_rate)] <- NA
-
+  
   confirmed_converted <- create_daily_cases(data = confirmed_converted)
   deaths_converted <- create_daily_cases(data = deaths_converted)
-
+  
   data <- list(
     confirmed = confirmed_converted,
     deaths = deaths_converted,
