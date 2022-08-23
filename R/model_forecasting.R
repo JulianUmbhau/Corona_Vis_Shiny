@@ -131,7 +131,7 @@ forecast_on_country_premodelled <- function(data,
 
 
 
-#' Title
+#' @title modelling for country
 #'
 #' @param country_data data for one country
 #'

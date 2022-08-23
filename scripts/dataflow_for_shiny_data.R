@@ -21,7 +21,7 @@ samlet_data <- list()
 i <- 1
 load("./data/corona_data.rda")
 start_time <- Sys.time()
-for (country_ in unique(corona_data$collected$country)[1:10]) {
+for (country_ in unique(corona_data$collected$country)[1]) {
   message(country_," ", i)
   i <- i+1
   country_data <- corona_data$confirmed
