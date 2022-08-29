@@ -120,7 +120,7 @@ renderPlot_function <- function(input, plot_type){
     } else {
       stop("No plot type chosen")
     }
-
+    
   })
 }
 
@@ -148,7 +148,7 @@ create_graph_forecast <- function(graph_choice,
                                   title,
                                   y_lab,
                                   forecast_horizon) {
-
+  
   if(graph_choice == "Confirmed Cases"){
     temp <- corona_data$confirmed
   } else if(graph_choice == "Confirmed Deaths"){
@@ -156,20 +156,20 @@ create_graph_forecast <- function(graph_choice,
   } else {
     stop("Wrong graph choice")
   }
-
+  
   country_data <- temp %>%
     filter(.data$country %in% country_list) %>%
     select(date, .data$value) %>%
     mutate(date = as.Date(date)) %>%
     as_tibble()
-
+  
   calibration_table <- create_country_models(country_data = country_data,
                                              n = 20)
-
+  
   country_data <- country_data %>%
     filter(date > date_range_start,
            date < date_range_end)
-
+  
   p <- calibration_table %>%
     # Remove RANDOMFOREST model with low accuracy
     # filter(.model_desc %in% models) %>% # Not correct format?
@@ -181,9 +181,33 @@ create_graph_forecast <- function(graph_choice,
                             .conf_interval_show = FALSE,
                             .title = title,
                             .y_lab = y_lab)
-
+  
   p
 }
+
+
+
+# graph baseret på predictions af eksisterende modeller
+# - confirmed/deaths
+# - model
+# - country
+# create_graph_forecast_pre_model <- function(
+#     graph_choice,
+#     country_list,
+#     date_range) {
+#   country_data <- samlet_data[country_list]
+#   
+#   if(graph_choice == "Confirmed Cases"){
+#     temp <- corona_data$confirmed
+#   } else if(graph_choice == "Confirmed Deaths"){
+#     temp <- corona_data$deaths
+#   } else {
+#     stop("Wrong graph choice")
+#   }
+#   
+# }
+
+
 
 
 #' Title
@@ -214,16 +238,16 @@ create_graph_non_forecast <- function(graph_choice,
   } else {
     stop("Wrong graph choice")
   }
-
+  
   temp <- temp %>%
     filter(.data$country %in% country_list) %>%
     filter(date >= date_range_start,
            date <= date_range_end) %>%
     arrange(.data$country)
-
+  
   country_list <- sort(country_list)
   legend_labels <- create_labels(country_list)
-
+  
   p <- temp %>%
     ggplot(aes_string("date",
                       paste0(data_value),
@@ -238,5 +262,5 @@ create_graph_non_forecast <- function(graph_choice,
     labs(color = "Countries") +
     scale_colour_discrete(labels = legend_labels)
   plotly::ggplotly(p)
-
+  
 }

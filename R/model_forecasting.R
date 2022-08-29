@@ -18,7 +18,8 @@ create_country_models <- function(country_data, n) {
     as_tibble()
   
   splits <- data_filtered %>%
-    time_series_split(assess = paste0(n," days"), cumulative = TRUE)
+    time_series_split(assess = paste0(n," days"),
+                      cumulative = TRUE)
   
   model_fit_arima <- arima_reg() %>%
     set_engine("auto_arima") %>%
@@ -95,6 +96,8 @@ create_country_models <- function(country_data, n) {
 #' @param date_range_end dateend
 #' @param calibration_table list with all countries modelled
 #'
+#' @importFrom tidyr as_tibble
+#'
 #' @return forecast plot on premodelled data
 #' @export
 forecast_on_country_premodelled <- function(data,
@@ -128,6 +131,104 @@ forecast_on_country_premodelled <- function(data,
 
 
 
+#' @title modelling for country
+#'
+#' @param country_data data for one country
+#'
+#' @importFrom tidyr as_tibble
+#' @importFrom dplyr mutate select
+#' @importFrom timetk time_series_split
+#' @importFrom modeltime arima_reg
+#' @importFrom parsnip fit
+#' 
+#' @return models of country
+#' @export
+#'
+train_models <- function(country_data) {
+  data_filtered <- country_data %>%
+    mutate(date = as.Date(date)) %>%
+    select(date, .data$value) %>%
+    as_tibble()
+  
+  training_days <- 40
+  testing_days <- 20
+  
+  splits <- data_filtered %>%
+    time_series_split(
+      initial = paste0(training_days," days"),
+      assess = paste0(testing_days," days"),
+      cumulative = TRUE,
+      slice = 1)
+  
+  print("Modelling Auto Arima")
+  model_fit_arima <- arima_reg() %>%
+    set_engine("auto_arima") %>%
+    fit(value ~ date, 
+        training(splits))
+  
+  print("Modelling Prophet")
+  model_fit_prophet <- prophet_reg() %>%
+    set_engine("prophet", 
+               yearly.seasonality = TRUE) %>%
+    fit(value ~ date, 
+        training(splits))
+  
+  print("Modelling GLMnet")
+  recipe_spec <- recipe(value ~ date,
+                        training(splits)) %>%
+    step_timeseries_signature(date) %>%
+    step_rm(contains("am.pm"),
+            contains("hour"),
+            contains("minute"),
+            contains("second"),
+            contains("xts")) %>%
+    step_fourier(date, period = 365, K = 5) %>%
+    step_dummy(all_nominal())
+  
+  model_spec_glmnet <- linear_reg(
+    penalty = 0.01,
+    mixture = 0.5) %>%
+    set_engine("glmnet")
+  
+  workflow_fit_glmnet <- workflow() %>%
+    add_model(model_spec_glmnet) %>%
+    add_recipe(recipe_spec %>% 
+                 step_rm(date)) %>%
+    fit(training(splits))
+  
+  # Random forest
+  print("Modelling RandomForest")
+  model_spec_rf <- rand_forest(
+    trees = 500, 
+    min_n = 50) %>%
+    set_engine("randomForest")
+  
+  workflow_fit_rf <- workflow() %>%
+    add_model(model_spec_rf) %>%
+    add_recipe(recipe_spec %>% step_rm(date)) %>%
+    fit(training(splits))
+  
+  print("Modelling Prophet boosted")
+  model_spec_prophet_boost <- prophet_boost() %>%
+    set_engine("prophet_xgboost", 
+               yearly.seasonality = TRUE)
+  
+  workflow_fit_prophet_boost <- workflow() %>%
+    add_model(model_spec_prophet_boost) %>%
+    add_recipe(recipe_spec) %>%
+    fit(training(splits))
+  
+  ## eval
+  model_table <- modeltime_table(
+    model_fit_arima,
+    model_fit_prophet,
+    workflow_fit_glmnet,
+    workflow_fit_rf,
+    workflow_fit_prophet_boost
+  )
+  
+  model_table
+}
 
 #################################################
 #Inspiration - https://rpubs.com/aborderon/covid-19-models-forecasting
