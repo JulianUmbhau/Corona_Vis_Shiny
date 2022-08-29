@@ -15,6 +15,9 @@ print(paste0("Data prep time: ", function_time))
 
 usethis::use_data(corona_data,
                   overwrite = T)
+
+
+
 #
 #
 ### creating starting models for every country - NB TAKES LONG!
