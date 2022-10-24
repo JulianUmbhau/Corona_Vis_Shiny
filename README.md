@@ -13,7 +13,7 @@ In order to use the repo:
 - Create a shinyapps.io account
 - Save account data in a rsconnect_data.rds file in data folder on local system
 - build docker container
-- run docker container
+- run docker container 
 
 ## Live dashboard
 https://julian-johannes-umbhau-jensen.shinyapps.io/workspace/ (long load time for visuals, due to wake up from hibernation)
